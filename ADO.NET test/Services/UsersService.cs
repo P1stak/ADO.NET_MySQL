@@ -1,5 +1,4 @@
-﻿using System;
-using ADO.NET_test.Models;
+﻿using ADO.NET_test.Models;
 using MySql.Data.MySqlClient;
 
 namespace ADO.NET_test.Services
@@ -41,32 +40,28 @@ namespace ADO.NET_test.Services
 
         public static User Get(string fullName)
         {
-            using (var connection = new MySqlConnection(Constant.ConnectionString))
+            using var connection = new MySqlConnection(Constant.ConnectionString);
+
+            connection.Open();
+
+            const string sqlQuery = "SELECT full_name, details, join_date, avatar, is_active FROM users WHERE full_name = @FullName AND is_active = TRUE;";
+
+            using var command = new MySqlCommand(sqlQuery, connection);
+            command.Parameters.AddWithValue("@FullName", fullName);
+
+            using var reader = command.ExecuteReader();
+
+            if (reader.Read())
             {
-                connection.Open();
-
-                const string sqlQuery = "SELECT full_name, details, join_date, avatar, is_active FROM users WHERE full_name = @FullName AND is_active = TRUE;";
-
-                using (var command = new MySqlCommand(sqlQuery, connection))
+                return new User
                 {
-                    command.Parameters.AddWithValue("@FullName", fullName);
+                    FullName = reader[0]?.ToString(),
+                    Details = reader[1]?.ToString(),
+                    JoinDate = reader.IsDBNull(2) ? DateTime.Now : Convert.ToDateTime(reader[2]),
+                    Avatar = reader[3]?.ToString(),
+                    IsActive = Convert.ToBoolean(reader[4])
 
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new User
-                            {
-                                FullName = reader[0]?.ToString(),
-                                Details = reader[1]?.ToString(),
-                                JoinDate = reader.IsDBNull(2) ? DateTime.Now : Convert.ToDateTime(reader[2]),
-                                Avatar = reader[3]?.ToString(),
-                                IsActive = Convert.ToBoolean(reader[4])
-
-                            };
-                        }
-                    }
-                }
+                };
             }
             return null;
         }
@@ -77,7 +72,7 @@ namespace ADO.NET_test.Services
             {
                 connection.Open();
 
-                const string sqlQuery= "SELECT COUNT(*) FROM users;";
+                const string sqlQuery = "SELECT COUNT(*) FROM users;";
 
                 using (var command = new MySqlCommand(sqlQuery, connection))
                 {
@@ -87,6 +82,20 @@ namespace ADO.NET_test.Services
                     else return 0;
                 }
             }
+        }
+
+        public static bool RemoveUser(string fullName)
+        {
+            using var connection = new MySqlConnection(Constant.ConnectionString);
+            connection.Open();
+
+            const string sqlQuery = "DELETE FROM users WHERE full_name = @FullName AND is_active = TRUE;";
+
+            using var command = new MySqlCommand(sqlQuery, connection);
+            command.Parameters.AddWithValue("@FullName", fullName);
+
+            int rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected > 0;
         }
     }
 }
