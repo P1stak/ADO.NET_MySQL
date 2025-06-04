@@ -45,7 +45,7 @@ namespace ADO.NET_test.Services
             {
                 connection.Open();
 
-                const string sqlQuery = "SELECT * FROM users WHERE full_name = @FullName AND is_active = TRUE;";
+                const string sqlQuery = "SELECT full_name, details, join_date, avatar, is_active FROM users WHERE full_name = @FullName AND is_active = TRUE;";
 
                 using (var command = new MySqlCommand(sqlQuery, connection))
                 {
@@ -57,15 +57,14 @@ namespace ADO.NET_test.Services
                         {
                             return new User
                             {
-                                FullName = reader.IsDBNull(0) ? null : reader.GetString(0),
-                                Details = reader.IsDBNull(1) ? null : reader.GetString(1),
-                                JoinDate = reader.IsDBNull(2) ? DateTime.Now : reader.GetDateTime(2),
-                                Avatar = reader.IsDBNull(3) ? null : reader.GetString(3),
-                                IsActive = reader.IsDBNull(4) ? true : reader.GetBoolean(4)
+                                FullName = reader[0]?.ToString(),
+                                Details = reader[1]?.ToString(),
+                                JoinDate = reader.IsDBNull(2) ? DateTime.Now : Convert.ToDateTime(reader[2]),
+                                Avatar = reader[3]?.ToString(),
+                                IsActive = Convert.ToBoolean(reader[4])
 
                             };
                         }
-
                     }
                 }
             }
