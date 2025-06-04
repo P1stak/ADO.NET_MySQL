@@ -12,22 +12,17 @@ namespace ADO.NET_test.Services
         public static int GetTotalCount()
         {
             var connectionString = Constant.ConnectionString;
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
 
-            using (var connection = new MySqlConnection(connectionString))
-            {
-                connection.Open();
+            const string sqlQuery = "SELECT COUNT(*) FROM courses";
 
-                const string sqlQuery = "SELECT COUNT(*) FROM courses";
+            using var command = new MySqlCommand(sqlQuery, connection);
+            object result = command.ExecuteScalar();
 
-                using (var command = new MySqlCommand(sqlQuery, connection))
-                {
-                    object result = command.ExecuteScalar();
+            if (result != null) return Convert.ToInt32(result);
+            else return 0;
 
-                    if (result != null) return Convert.ToInt32(result);
-
-                    else return 0;
-                }
-            }
         }
     }
 }

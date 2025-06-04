@@ -22,7 +22,8 @@ public class Program
 
 1. Войти
 2. Зарегистрироваться
-3. Закрыть приложение
+3. Удаление пользователя из БД
+4. Закрыть приложение
 
 ************************************************
 ");
@@ -38,6 +39,9 @@ public class Program
                     RegisterUser();
                     break;
                 case "3":
+                    DeleteUser();
+                    break;
+                case "4":
                     Console.WriteLine("До свидания!");
                     isRunnig = false;
                     break;
@@ -107,5 +111,28 @@ public class Program
             Console.WriteLine("Пользователь не найден, произведен выход на главную страницу\n");
         }
 
+    }
+
+    public static void DeleteUser()
+    {
+        Console.WriteLine("Введите имя и фамилию через пробел удаляемого пользователя:");
+        string fullName = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(fullName))
+        {
+            Console.WriteLine("Имя не может быть пустым\n");
+            return;
+        }
+
+        bool isDeleted = UsersService.RemoveUser(fullName.Trim());
+
+        if (isDeleted)
+        {
+            Console.WriteLine($"Пользователь '{fullName}' успешно удален\n");
+        }
+        else
+        {
+            Console.WriteLine("Пользователь не найден или уже удален\n");
+        }
     }
 }
