@@ -1,10 +1,5 @@
 ﻿using ADO.NET_test.Models;
 using ADO.NET_test.Services;
-using MySql.Data.MySqlClient;
-using Mysqlx.Prepare;
-using Org.BouncyCastle.Asn1.Cmp;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 
 public class Program
 {
