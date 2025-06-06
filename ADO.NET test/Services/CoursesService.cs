@@ -8,8 +8,7 @@ namespace ADO.NET_test.Services
     {
         public static int GetTotalCount()
         {
-            var connectionString = Constant.ConnectionString;
-            using var connection = new MySqlConnection(connectionString);
+            using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
 
             const string sqlQuery = "SELECT COUNT(*) FROM courses";

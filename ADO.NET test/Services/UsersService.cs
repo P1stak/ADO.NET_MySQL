@@ -6,15 +6,19 @@ namespace ADO.NET_test.Services
 {
     public class UsersService
     {
+        /// <summary>
+        /// Добавление нового пользователя в таблицу users
+        /// </summary>
+        /// <param name="user">Сущность пользователя</param>
+        /// <returns>User</returns>
         public static bool Add(User user)
         {
-            string connectionString = Constant.ConnectionString;
             string sqlQuery = @"INSERT INTO users 
                 (full_name, details, join_date, avatar, is_active)
                 VALUES 
                 (@FullName, @Details, @JoinDate, @Avatar, @IsActive);";
 
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(Constant.ConnectionString))
             {
                 try
                 {
@@ -68,6 +72,9 @@ namespace ADO.NET_test.Services
                 : null;
         }
 
+        /// <summary>
+        /// Работа с sql функцией для выявления всех пользователей в таблице users
+        /// </summary>
         public static int GetTotalCount()
         {
             using (var connection = new MySqlConnection(Constant.ConnectionString))
@@ -86,6 +93,11 @@ namespace ADO.NET_test.Services
             }
         }
 
+        /// <summary>
+        /// Удаление пользователя из таблицы users
+        /// </summary>
+        /// <param name="fullName">Полное имя пользователя</param>
+        /// <returns>User</returns>
         public static bool RemoveUser(string fullName)
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);

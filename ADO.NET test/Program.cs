@@ -1,8 +1,10 @@
 ﻿using ADO.NET_test.Models;
 using ADO.NET_test.Services;
+using MySql.Data.MySqlClient;
 
 public class Program
 {
+
     /// <summary>
     /// Обработка начального меню
     /// </summary>
@@ -51,12 +53,14 @@ public class Program
     /// </summary>
     public static void DisplayMainMenu()
     {
+        using var connect = new MySqlConnection(Constant.ConnectionString);
+
         var totalCoursesCount = CoursesService.GetTotalCount();
         var totalUsersCount = UsersService.GetTotalCount();
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine(@$"
                             ************************************************
-                            ******** Добро пожаловать в БД Stepik! *********
+                            ******** Добро пожаловать в БД {connect.Database.ToString()}! *********
                             ************************************************
                             Количество курсов на платформе: {totalCoursesCount}
                             Количество пользователей на платформе: {totalUsersCount}
@@ -331,6 +335,7 @@ public class Program
     {
         List<Course> courses = CoursesService.Get(fullName);
         Console.ForegroundColor = ConsoleColor.Yellow;
+
         Console.WriteLine(@$"* Список курсов {fullName} *
 
                         Выберите действие (введите число и нажмите Enter):
@@ -360,3 +365,30 @@ public class Program
         Console.ResetColor();
     }
 }
+
+
+// ДЛЯ РАБОТЫ С МЕНЮ ПОЛЬЗОВАТЕЛЯ, НЕОБХОДИМО СОЗДАТЬ ХРАНИМУЮ ПРОЦЕДУРУ В MYSQL
+
+/*
+ * 
+ DELIMITER //
+
+CREATE FUNCTION format_number(number INT)
+RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+    DECLARE formatted_number VARCHAR(50);
+
+    IF number < 1000 THEN
+        SET formatted_number = CAST(number AS CHAR);
+    ELSE
+        SET formatted_number = CONCAT(FORMAT(number / 1000, 1), 'K');        
+        SET formatted_number = REPLACE(formatted_number, '.0K', 'K');
+    END IF;
+
+    RETURN formatted_number;
+END //
+
+DELIMITER ;
+
+ */
