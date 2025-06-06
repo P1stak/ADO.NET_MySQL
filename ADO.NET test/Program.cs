@@ -58,12 +58,16 @@ public class Program
         var totalCoursesCount = CoursesService.GetTotalCount();
         var totalUsersCount = UsersService.GetTotalCount();
         Console.ForegroundColor = ConsoleColor.Cyan;
+
+
+
         Console.WriteLine(@$"
-                            ************************************************
-                            ******** Добро пожаловать в БД {connect.Database.ToString()}! *********
-                            ************************************************
-                            Количество курсов на платформе: {totalCoursesCount}
-                            Количество пользователей на платформе: {totalUsersCount}
+                            ***********************************************************
+                            *********** Добро пожаловать в БД {connect.Database.ToString()}! ************
+                            ***********************************************************
+                            ************ Количество курсов на платформе: {totalCoursesCount} ***********
+                            ******* Количество пользователей на платформе: {totalUsersCount} *********
+                            ***********************************************************
 
                             Выберите действие (введите число и нажмите Enter):
 
@@ -72,7 +76,7 @@ public class Program
                             3. Удалить пользователя из БД
                             4. Закрыть приложение
 
-                            ************************************************
+                            ***********************************************************
 
 ");
         Console.ResetColor();
@@ -314,15 +318,22 @@ public class Program
     {
         while (true)
         {
-            DisplayUserCourses(user.FullName);
-            string choice = Console.ReadLine();
+            var coursesId = DisplayUserCourses(user.FullName);
+            string input = Console.ReadLine();
 
-            switch (choice)
+            switch (input)
             {
-                case "1":
+                case "0":
                     return;
                 default:
-                    PrintWrongInputMessage();
+                    if (coursesId.Contains(input))
+                    {
+                        UserCommentsMenu(Convert.ToInt32(input), user);
+                    }
+                    else
+                    {
+                        PrintWrongInputMessage();
+                    }
                     break;
             }
         }
@@ -331,18 +342,13 @@ public class Program
     /// <summary>
     /// Отображение списка курсов пользователя.
     /// </summary>
-    private static void DisplayUserCourses(string fullName)
+    private static IEnumerable<string> DisplayUserCourses(string fullName)
     {
         List<Course> courses = CoursesService.Get(fullName);
         Console.ForegroundColor = ConsoleColor.Yellow;
-
-        Console.WriteLine(@$"* Список курсов {fullName} *
-
-                        Выберите действие (введите число и нажмите Enter):
-
-                        1. Назад
-                        ");
-        var count = 1;
+        Console.WriteLine("\n* Список курсов " + fullName + " *\n\n" +
+                          "Выберите действие (введите число и нажмите Enter):\n" +
+                          "0. Назад");
 
         if (courses.Count == 0)
         {
@@ -350,19 +356,92 @@ public class Program
         }
         else
         {
+            Console.WriteLine("Для просмотра подробностей курса, введите его id.\n");
             foreach (var course in courses)
             {
-                Console.WriteLine(@$"
-                        ______________________________________________
-                        {count}.
-                        Название: {course.Title}
-                        Описание: {course.Summary ?? "Отсутствует"}
-                        Фото: {course.Photo ?? "Отсутствует"}
-                        ______________________________________________");
-                count++;
+                Console.WriteLine("______________________________________________\n" +
+                                  "id: " + course.Id + "\n" +
+                                  "Название: " + course.Title + "\n" +
+                                  "Описание: " + (course.Summary ?? "Отсутствует") + "\n" +
+                                  "Фото: " + (course.Photo ?? "Отсутствует") + "\n" +
+                                  "______________________________________________");
             }
         }
         Console.ResetColor();
+        return courses.Select(x => x.Id.ToString());
+    }
+
+    /// <summary>
+    /// Обработка меню комментариев пользователя.
+    /// </summary>
+    public static void UserCommentsMenu(int id, User user)
+    {
+        while (true)
+        {
+            var commentsIds = DisplayUserComments(id, user);
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "0":
+                    return;
+                default:
+                    if (commentsIds.Contains(choice))
+                    {
+                        var isCommentDeleted = CommentsService.Delete(Convert.ToInt32(choice));
+                        if (isCommentDeleted)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Комментарий успешно удален");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Ошибка удаления комментария");
+                            Console.ResetColor();
+                        }
+                    }
+                    else
+                    {
+                        PrintWrongInputMessage();
+                    }
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Отображение комментариев к курсам пользователя.
+    /// </summary>
+    private static IEnumerable<string> DisplayUserComments(int id, User user)
+    {
+        List<Course> courses = CoursesService.Get(user.FullName);
+        var currentCourse = courses.FirstOrDefault(x => x.Id == id);
+        List<Comment> comments = CommentsService.Get(id);
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.WriteLine("\n* Комментарии к курсу " + currentCourse.Title + " *\n\n" +
+                          "Выберите действие (введите число и нажмите Enter):\n" +
+                          "0. Назад");
+
+        if (comments.Count == 0)
+        {
+            Console.WriteLine("У курса еще нет комментариев.");
+        }
+        else
+        {
+            Console.WriteLine("Чтобы удалить комментарий, введите его id.");
+            foreach (var comment in comments)
+            {
+                Console.WriteLine("______________________________________________\n" +
+                                  comment.Id + "\n" +
+                                  comment.Time + "\n" +
+                                  comment.Text + "\n" +
+                                  "______________________________________________");
+            }
+        }
+        Console.ResetColor();
+        return comments.Select(x => x.Id.ToString());
     }
 }
 
