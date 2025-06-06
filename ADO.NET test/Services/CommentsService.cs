@@ -19,44 +19,33 @@ namespace ADO.NET_test.Services
         {
             var comments = new List<Comment>();
 
-            try
+            using var connection = new MySqlConnection(Constant.ConnectionString);
+            connection.Open();
+
+            var sqlQuery = @"SELECT c.id, c.text, c.time
+                      FROM comments AS c
+                      JOIN steps AS s ON c.step_id = s.id
+                      JOIN unit_lessons AS ul ON s.id = ul.lesson_id
+                      JOIN lessons AS l ON ul.lesson_id = l.id
+                      JOIN units AS u ON ul.unit_id = u.id
+                      JOIN courses AS cr ON u.course_id = cr.id
+                      WHERE reply_comment_id IS NULL AND cr.id = @id
+                      ORDER BY c.time DESC;";
+
+            using var command = new MySqlCommand(sqlQuery, connection);
+            var idParam = new MySqlParameter("@id", id);
+            command.Parameters.Add(idParam);
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                using var connection = new MySqlConnection(Constant.ConnectionString);
-                connection.Open();
-
-                const string sqlQuery = @"SELECT c.id, c.text, c.time
-                                        FROM comments AS c
-                                        JOIN steps AS s ON c.step_id = s.id
-                                        JOIN unit_lessons AS ul ON s.id = ul.lesson_id
-                                        JOIN lessons AS l ON ul.lesson_id = l.id
-                                        JOIN units AS u ON ul.unit_id = u.id
-                                        JOIN courses AS cr ON u.course_id = cr.id
-                                        WHERE reply_comment_id IS NULL AND cr.id = @id
-                                        ORDER BY c.time DESC;";
-
-                using var command = new MySqlCommand(sqlQuery, connection);
+                var comment = new Comment
                 {
-                    command.Parameters.Add(new MySqlParameter("@id", id));
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            comments.Add(new Comment
-                            {
-                                Id = reader.GetInt32(0),
-                                Text = reader.IsDBNull(1) ? null : reader.GetString(1),
-                                Time = reader.IsDBNull(2) ? DateTime.Now : reader.GetDateTime(2)
-                            });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Ошибка при получении коментария: {ex.Message}");
-                Console.ResetColor();
+                    Id = reader.GetInt32("id"),
+                    Text = reader.GetString("text"),
+                    Time = reader.GetDateTime("time"),
+                };
+                comments.Add(comment);
             }
 
             return comments;

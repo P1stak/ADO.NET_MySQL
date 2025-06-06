@@ -9,37 +9,33 @@ namespace ADO.NET_test.Services
         /// <summary>
         /// Добавление нового пользователя в таблицу users
         /// </summary>
-        /// <param name="user">Сущность пользователя</param>
-        /// <returns>User</returns>
+        /// <param name="user">Новый пользователь</param>
+        /// <returns>Удалось ли добавить пользователя</returns>
         public static bool Add(User user)
         {
-            string sqlQuery = @"INSERT INTO users 
-                (full_name, details, join_date, avatar, is_active)
-                VALUES 
-                (@FullName, @Details, @JoinDate, @Avatar, @IsActive);";
-
-            using (MySqlConnection connection = new MySqlConnection(Constant.ConnectionString))
+            try
             {
-                try
-                {
-                    connection.Open();
+                using var connection = new MySqlConnection(Constant.ConnectionString);
+                connection.Open();
 
-                    using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
-                    {
-                        command.Parameters.AddWithValue("@FullName", user.FullName);
-                        command.Parameters.AddWithValue("@Details", user.Details);
-                        command.Parameters.AddWithValue("@JoinDate", user.JoinDate);
-                        command.Parameters.AddWithValue("@Avatar", user.Avatar);
-                        command.Parameters.AddWithValue("@IsActive", user.IsActive);
+                const string sqlQuery = @"INSERT INTO users (full_name, details, join_date, avatar, is_active)
+                          VALUES (@FullName, @Details, @JoinDate, @Avatar, @IsActive)";
 
-                        int execute = command.ExecuteNonQuery();
-                        return execute > 0;
-                    }
-                }
-                catch
-                {
-                    return false;
-                }
+
+                using var command = new MySqlCommand(sqlQuery, connection);
+
+                command.Parameters.AddWithValue("@FullName", user.FullName);
+                command.Parameters.AddWithValue("@Details", user.Details);
+                command.Parameters.AddWithValue("@JoinDate", user.JoinDate);
+                command.Parameters.AddWithValue("@Avatar", user.Avatar);
+                command.Parameters.AddWithValue("@IsActive", user.IsActive);
+                var rowsAffected = command.ExecuteNonQuery();
+
+                return rowsAffected == 1;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -52,11 +48,14 @@ namespace ADO.NET_test.Services
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
-            var query = @"SELECT * FROM users
-                   WHERE full_name = @FullName AND is_active = 1;";
-            using var command = new MySqlCommand(query, connection);
+
+            const string sqlQuery = @"SELECT * FROM users WHERE full_name = @FullName AND is_active = 1;";
+
+            using var command = new MySqlCommand(sqlQuery, connection);
             command.Parameters.AddWithValue("@FullName", fullName);
+
             using var reader = command.ExecuteReader();
+
             return reader.Read()
                 ? new User
                 {
@@ -73,24 +72,19 @@ namespace ADO.NET_test.Services
         }
 
         /// <summary>
-        /// Работа с sql функцией для выявления всех пользователей в таблице users
+        /// Получение общего количества пользователей
         /// </summary>
         public static int GetTotalCount()
         {
-            using (var connection = new MySqlConnection(Constant.ConnectionString))
-            {
-                connection.Open();
+            using var connection = new MySqlConnection(Constant.ConnectionString);
+            connection.Open();
 
-                const string sqlQuery = "SELECT COUNT(*) FROM users;";
+            const string sqlQuery = "SELECT COUNT(*) FROM users;";
 
-                using (var command = new MySqlCommand(sqlQuery, connection))
-                {
-                    object result = command.ExecuteScalar();
+            using var command = new MySqlCommand(sqlQuery, connection);
+            var result = command.ExecuteScalar();
 
-                    if (result != null) return Convert.ToInt32(result);
-                    else return 0;
-                }
-            }
+            return result != null ? Convert.ToInt32(result) : 0;
         }
 
         /// <summary>
@@ -117,7 +111,7 @@ namespace ADO.NET_test.Services
         /// </summary>
         /// <param name="number">Число для форматирования</param>
         /// <returns>Отформатированное число</returns>
-        public static string FormatUserMetrics(int number)
+        public static string FormatUserMetrics(int number) // для ображения к этому методу создай хранимую процедуру в БД
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
