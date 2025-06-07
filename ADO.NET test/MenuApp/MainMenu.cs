@@ -8,6 +8,9 @@ public class MainMenu
     private readonly CoursesService _coursesService = new();
     private readonly UsersProcessing _usersProcessing = new();
 
+    /// <summary>
+    /// метод отображения главного меню
+    /// </summary>
     public void Display()
     {
         var totalCoursesCount = _coursesService.GetTotalCount();
@@ -28,6 +31,9 @@ public class MainMenu
         Console.ResetColor();
     }
 
+    /// <summary>
+    /// метод меню выбора пользователя в главном меню
+    /// </summary>
     public void HandleUserChoice()
     {
         while (true)
@@ -74,6 +80,7 @@ public class MainMenu
             }
         }
     }
+
 
     private void HandleUserMenu(User user)
     {

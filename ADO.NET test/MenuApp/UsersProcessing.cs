@@ -5,6 +5,9 @@ public class UsersProcessing
 {
     private readonly UsersService _usersService = new();
 
+    /// <summary>
+    /// регистрация пользователя
+    /// </summary>
     public User PerformRegistration()
     {
         var userName = "";
@@ -37,6 +40,9 @@ public class UsersProcessing
         }
     }
 
+    /// <summary>
+    /// вход по имени пользователя в БД
+    /// </summary>
     public User PerformLogin()
     {
         var userName = "";
@@ -64,6 +70,9 @@ public class UsersProcessing
         }
     }
 
+    /// <summary>
+    /// удаление пользователя из БД по full_name
+    /// </summary>
     public void PerformDeletion()
     {
         Console.ForegroundColor = ConsoleColor.Yellow;

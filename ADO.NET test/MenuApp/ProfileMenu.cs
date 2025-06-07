@@ -4,6 +4,10 @@ using ADO.NET_test.Services;
 public record class ProfileMenu(User _user, WrongChoice _wrongChoice)
 {
     private readonly UsersService _usersService = new();
+
+    /// <summary>
+    /// отображения профиля пользователя
+    /// </summary>
     public void Display()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;

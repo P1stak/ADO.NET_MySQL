@@ -6,6 +6,9 @@ public record class CertificateMenu(User _user, WrongChoice _wrongChoice)
 {
     private readonly CertificatesService _сertificatesService = new();
 
+    /// <summary>
+    /// метод отображения сертификатов пользователя
+    /// </summary>
     public void Display()
     {
         var certificates = _сertificatesService.Get(_user.FullName);
@@ -51,6 +54,9 @@ public record class CertificateMenu(User _user, WrongChoice _wrongChoice)
         Console.ResetColor();
     }
 
+    /// <summary>
+    /// метод выбора пользователя в меню сертификатов
+    /// </summary>
     public void HandleUserChoice()
     {
         while (true)

@@ -7,6 +7,9 @@ public record class CoursesMenu(User _user, WrongChoice _wrongChoice)
 {
     private readonly CoursesService _coursesService = new();
 
+    /// <summary>
+    /// метод отображения курсов пользователя
+    /// </summary>
     public void Display()
     {
         List<Course> courses = _coursesService.Get(_user.FullName);
@@ -35,6 +38,9 @@ public record class CoursesMenu(User _user, WrongChoice _wrongChoice)
         Console.ResetColor();
     }
 
+    /// <summary>
+    /// метод выбора пользователя в меню курсов
+    /// </summary>
     public void HandleUserChoice()
     {
         while (true)
@@ -65,6 +71,9 @@ public record class CoursesMenu(User _user, WrongChoice _wrongChoice)
         }
     }
 
+    /// <summary>
+    /// Меню обработки комментариев пользователей
+    /// <summary>
     private void HandleUserCommentsMenu(int coursesId)
     {
         var commentsMenu = new CommentsMenu(coursesId, _user, _wrongChoice);

@@ -2,6 +2,9 @@
 
 public record class UserMenu(User _user, WrongChoice _wrongChoice)
 {
+    /// <summary>
+    /// отображения профиля пользователя
+    /// </summary>
     public void Display()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
@@ -15,6 +18,9 @@ public record class UserMenu(User _user, WrongChoice _wrongChoice)
         Console.ResetColor();
     }
 
+    /// <summary>
+    /// выбор пользователя
+    /// </summary>
     public void HandleUserChoice()
     {
         while (true)
@@ -47,6 +53,7 @@ public record class UserMenu(User _user, WrongChoice _wrongChoice)
         }
     }
 
+    // меню, курсы, сертификаты
     private void HandleProfileMenu()
     {
         var profileMenu = new ProfileMenu(_user, _wrongChoice);
