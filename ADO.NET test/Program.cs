@@ -5,7 +5,6 @@ using System.Data;
 
 public class Program
 {
-
     private const int ConsoleWidth = 80;
     private const char BorderChar = '=';
     private const char LineChar = '-';

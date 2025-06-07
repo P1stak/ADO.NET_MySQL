@@ -11,7 +11,7 @@ namespace ADO.NET_test.Services
         /// </summary>
         /// <param name="user">Новый пользователь</param>
         /// <returns>Удалось ли добавить пользователя</returns>
-        public static bool Add(User user)
+        public bool Add(User user)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace ADO.NET_test.Services
         /// </summary>
         /// <param name="fullName">Полное имя пользователя</param>
         /// <returns>User</returns>
-        public static User? Get(string fullName)
+        public User? Get(string fullName)
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
@@ -74,7 +74,7 @@ namespace ADO.NET_test.Services
         /// <summary>
         /// Получение общего количества пользователей
         /// </summary>
-        public static int GetTotalCount()
+        public int GetTotalCount()
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
@@ -92,7 +92,7 @@ namespace ADO.NET_test.Services
         /// </summary>
         /// <param name="fullName">Полное имя пользователя</param>
         /// <returns>User</returns>
-        public static bool RemoveUser(string fullName)
+        public bool RemoveUser(string fullName)
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
@@ -111,7 +111,7 @@ namespace ADO.NET_test.Services
         /// </summary>
         /// <param name="number">Число для форматирования</param>
         /// <returns>Отформатированное число</returns>
-        public static string FormatUserMetrics(int number) // для ображения к этому методу создай хранимую процедуру в БД
+        public string FormatUserMetrics(int number) // для ображения к этому методу создай хранимую процедуру в БД
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
@@ -141,7 +141,7 @@ namespace ADO.NET_test.Services
         /// Рейтинг пользователей
         /// </summary>
         /// <returns>DataSet</returns>
-        public static DataSet GetUserRating()
+        public DataSet GetUserRating()
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);
             connection.Open();
