@@ -1,6 +1,7 @@
 ﻿using ADO.NET_test.Models;
 using ADO.NET_test.Services;
 using MySql.Data.MySqlClient;
+using System.Data;
 
 public class Program
 {
@@ -37,6 +38,10 @@ public class Program
                     DisplayMainMenu();
                     break;
                 case "4":
+                    DisplayUserRating();
+                    DisplayMainMenu();
+                    break;
+                case "5":
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("До свидания!\n");
                     Console.ResetColor();
@@ -74,7 +79,8 @@ public class Program
                             1. Войти
                             2. Зарегистрироваться
                             3. Удалить пользователя из БД
-                            4. Закрыть приложение
+                            4. Посмотреть рейтинг пользователя
+                            5. Закрыть приложение
 
                             ***********************************************************
 
@@ -409,6 +415,7 @@ public class Program
                     break;
             }
         }
+
     }
 
     /// <summary>
@@ -443,6 +450,81 @@ public class Program
         Console.ResetColor();
         return comments.Select(x => x.Id.ToString());
     }
+
+    /// <summary>
+    /// Отображение рейтинга пользователей.
+    /// </summary>
+    public static void DisplayUserRating()
+    {
+        Console.Clear(); // Очищаем консоль перед выводом рейтинга
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+
+        // Центрируем заголовок
+        int windowWidth = Console.WindowWidth;
+        string title = "* Рейтинг пользователей *";
+        Console.WriteLine(new string(' ', (windowWidth - title.Length) / 2) + title + "\n");
+
+        var dataSet = UsersService.GetUserRating();
+
+        if (dataSet.Tables.Count == 0 || dataSet.Tables[0].Rows.Count == 0)
+        {
+            Console.WriteLine("На платформе еще нет пользователей");
+            Console.ResetColor();
+            return;
+        }
+
+        // Настраиваем отступы и ширину колонок
+        int nameWidth = 25;
+        int knowledgeWidth = 15;
+        int reputationWidth = 15;
+        int totalWidth = nameWidth + knowledgeWidth + reputationWidth + 6; // +6 для разделителей
+
+        // Центрируем таблицу
+        int tableIndent = (windowWidth - totalWidth) / 2;
+        string indent = new string(' ', tableIndent);
+
+        // Выводим разделительную линию
+        Console.WriteLine(indent + new string('═', totalWidth));
+
+        // Выводим заголовки колонок с центрированием текста
+        Console.WriteLine(indent + "║ " + CenterText("Пользователь", nameWidth) + " ║ " +
+                          CenterText("Знания", knowledgeWidth) + " ║ " +
+                          CenterText("Репутация", reputationWidth) + " ║");
+
+        Console.WriteLine(indent + new string('═', totalWidth));
+
+        // Выводим данные
+        foreach (DataRow row in dataSet.Tables[0].Rows)
+        {
+            Console.WriteLine(indent + "║ " + (row["full_name"]?.ToString() ?? "").PadRight(nameWidth) + " ║ " +
+                              CenterText(row["knowledge"]?.ToString() ?? "", knowledgeWidth) + " ║ " +
+                              CenterText(row["reputation"]?.ToString() ?? "", reputationWidth) + " ║");
+        }
+
+        Console.WriteLine(indent + new string('═', totalWidth));
+        Console.ResetColor();
+
+        // Ждем действия пользователя перед возвратом в меню
+        Console.WriteLine("\nНажмите любую клавишу для возврата в меню...");
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    // Вспомогательный метод для центрирования текста в колонке
+    private static string CenterText(string text, int width)
+    {
+        if (text.Length >= width)
+        {
+            return text;
+        }
+
+        int leftPadding = (width - text.Length) / 2;
+        int rightPadding = width - text.Length - leftPadding;
+
+        return new string(' ', leftPadding) + text + new string(' ', rightPadding);
+    }
+
 }
 
 
