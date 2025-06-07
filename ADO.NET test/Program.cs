@@ -415,6 +415,7 @@ public class Program
                     break;
             }
         }
+
     }
 
     /// <summary>
@@ -523,6 +524,7 @@ public class Program
 
         return new string(' ', leftPadding) + text + new string(' ', rightPadding);
     }
+
 }
 
 
