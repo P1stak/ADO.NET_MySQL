@@ -1,15 +1,21 @@
 ﻿using ADO.NET_test.Models;
 using ADO.NET_test.Services;
 using MySql.Data.MySqlClient;
+using System.Data;
 
 public class Program
 {
+
+    private const int ConsoleWidth = 60;
+    private const char BorderChar = '=';
+    private const char LineChar = '-';
 
     /// <summary>
     /// Обработка начального меню
     /// </summary>
     public static void Main()
     {
+        Console.Title = "myDB";
         DisplayMainMenu();
 
         while (true)
@@ -37,8 +43,12 @@ public class Program
                     DisplayMainMenu();
                     break;
                 case "4":
+                    DisplayUserRating();
+                    DisplayMainMenu();
+                    break;
+                case "5":
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("До свидания!\n");
+                    PrintCentered("До свидания!");
                     Console.ResetColor();
                     return;
                 default:
@@ -49,36 +59,50 @@ public class Program
     }
 
     /// <summary>
+    /// Печатает текст по центру консоли
+    /// </summary>
+    private static void PrintCentered(string text, ConsoleColor color = ConsoleColor.White)
+    {
+        Console.ForegroundColor = color;
+        int padding = (ConsoleWidth - text.Length) / 2;
+        Console.WriteLine(text.PadLeft(padding + text.Length));
+        Console.ResetColor();
+    }
+
+    /// <summary>
+    /// Печатает разделительную линию
+    /// </summary>
+    private static void PrintLine(int length = ConsoleWidth, char lineChar = LineChar)
+    {
+        Console.WriteLine(new string(lineChar, length));
+    }
+
+    /// <summary>
     /// Отображение главного меню приложения.
     /// </summary>
     public static void DisplayMainMenu()
     {
+        Console.Clear();
         using var connect = new MySqlConnection(Constant.ConnectionString);
 
         var totalCoursesCount = CoursesService.GetTotalCount();
         var totalUsersCount = UsersService.GetTotalCount();
-        Console.ForegroundColor = ConsoleColor.Cyan;
 
+        PrintLine(ConsoleWidth, BorderChar);
+        PrintCentered($"Добро пожаловать в БД {connect.Database}!", ConsoleColor.Cyan);
+        PrintLine(ConsoleWidth, BorderChar);
 
+        Console.WriteLine($"\n{"Количество курсов на платформе:",-30} {totalCoursesCount}");
+        Console.WriteLine($"{"Количество пользователей:",-30} {totalUsersCount}\n");
 
-        Console.WriteLine(@$"
-                            ***********************************************************
-                            *********** Добро пожаловать в БД {connect.Database.ToString()}! ************
-                            ***********************************************************
-                            ************ Количество курсов на платформе: {totalCoursesCount} ***********
-                            ******* Количество пользователей на платформе: {totalUsersCount} *********
-                            ***********************************************************
-
-                            Выберите действие (введите число и нажмите Enter):
-
-                            1. Войти
-                            2. Зарегистрироваться
-                            3. Удалить пользователя из БД
-                            4. Закрыть приложение
-
-                            ***********************************************************
-
-");
+        PrintLine();
+        Console.WriteLine("Выберите действие (введите число и нажмите Enter):\n");
+        Console.WriteLine("1. Войти");
+        Console.WriteLine("2. Зарегистрироваться");
+        Console.WriteLine("3. Удалить пользователя");
+        Console.WriteLine("4. Рейтинг пользователей");
+        Console.WriteLine("5. Закрыть приложение");
+        PrintLine(ConsoleWidth, BorderChar);
         Console.ResetColor();
     }
 
@@ -88,26 +112,31 @@ public class Program
     public static void PrintWrongInputMessage()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Неверный выбор. Попробуйте снова.");
+        Console.WriteLine("\nНеверный выбор. Попробуйте снова.\n");
         Console.ResetColor();
     }
 
     /// <summary>
     /// Регистрация нового пользователя.
     /// </summary>
-    /// <returns>Возвращает объект пользователя, если регистрация успешна, иначе пустой объект.</returns>
     public static User PerformRegistrationUser()
     {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        PrintCentered("РЕГИСТРАЦИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ");
+        PrintLine();
+        Console.ResetColor();
+
         var userName = "";
         while (string.IsNullOrEmpty(userName))
         {
-            Console.WriteLine("Введите имя и фамилию через пробел и нажмите Enter:");
+            Console.WriteLine("Введите имя и фамилию через пробел:");
             userName = Console.ReadLine()?.Trim();
 
             if (string.IsNullOrEmpty(userName))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Имя не может быть пустым!");
+                Console.WriteLine("Имя не может быть пустым!\n");
                 Console.ResetColor();
                 continue;
             }
@@ -115,16 +144,13 @@ public class Program
             if (userName.Split(' ').Length < 2)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Пожалуйста, введите и имя, и фамилию!");
+                Console.WriteLine("Пожалуйста, введите и имя, и фамилию!\n");
                 Console.ResetColor();
                 userName = "";
             }
         }
 
-        var newUser = new User
-        {
-            FullName = userName
-        };
+        var newUser = new User { FullName = userName };
 
         try
         {
@@ -133,14 +159,14 @@ public class Program
             if (isAdditionSuccessful)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Пользователь '{newUser.FullName}' успешно добавлен.\n");
+                Console.WriteLine($"\nПользователь '{newUser.FullName}' успешно добавлен.\n");
                 Console.ResetColor();
                 return newUser;
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Произошла ошибка. Пользователь уже существует в БД.\n");
+                Console.WriteLine($"\nОшибка: Пользователь уже существует.\n");
                 Console.ResetColor();
                 return new User();
             }
@@ -148,7 +174,7 @@ public class Program
         catch (Exception ex)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Ошибка при добавлении пользователя: {ex.Message}\n");
+            Console.WriteLine($"\nОшибка при добавлении: {ex.Message}\n");
             Console.ResetColor();
             return new User();
         }
@@ -157,32 +183,97 @@ public class Program
     /// <summary>
     /// Вход пользователя в систему.
     /// </summary>
-    /// <returns>Возвращает объект пользователя, если вход успешен, иначе пустой объект.</returns>
     public static User PerformLoginUser()
     {
-        var userName = "";
-        while (string.IsNullOrEmpty(userName))
+        while (true) // Бесконечный цикл, пока пользователь не войдет или не выйдет
         {
-            Console.WriteLine("Введите имя и фамилию через пробел и нажмите Enter:");
-            userName = Console.ReadLine();
-        }
-
-        User user = UsersService.Get(userName);
-
-        if (!string.IsNullOrEmpty(user?.FullName))
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Пользователь '{user.FullName}' успешно вошел.\n");
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            PrintCentered("АВТОРИЗАЦИЯ");
+            PrintLine();
             Console.ResetColor();
-            return user;
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Пользователь не найден, произведен выход на главную страницу.\n");
-            Console.ResetColor();
-            DisplayMainMenu();
-            return new User();
+
+            var userName = "";
+            while (string.IsNullOrEmpty(userName))
+            {
+                Console.WriteLine("Введите имя и фамилию (или 0 для выхода):");
+                userName = Console.ReadLine()?.Trim();
+
+                // Проверка на команду выхода
+                if (userName == "0")
+                {
+                    DisplayMainMenu();
+                    return new User(); // Возвращаем пустого пользователя
+                }
+
+                if (string.IsNullOrEmpty(userName))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Имя не может быть пустым!\n");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                if (userName.Split(' ').Length < 2)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Пожалуйста, введите и имя, и фамилию!\n");
+                    Console.ResetColor();
+                    userName = "";
+                }
+            }
+
+            try
+            {
+                User user = UsersService.Get(userName);
+
+                if (!string.IsNullOrEmpty(user?.FullName))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\nДобро пожаловать, {user.FullName}!\n");
+                    Console.ResetColor();
+                    Thread.Sleep(1000); // Задержка для отображения сообщения
+                    return user;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nПользователь не найден.\n");
+
+                    // Предложение выбора действия
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Выберите действие:");
+                    Console.WriteLine("1. Попробовать снова");
+                    Console.WriteLine("2. Вернуться в главное меню");
+                    Console.ResetColor();
+
+                    string choice = Console.ReadLine();
+                    if (choice == "2")
+                    {
+                        DisplayMainMenu();
+                        return new User();
+                    }
+                    // Если выбран 1 или другой вариант - цикл продолжится
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\nОшибка при авторизации: {ex.Message}\n");
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Выберите действие:");
+                Console.WriteLine("1. Попробовать снова");
+                Console.WriteLine("2. Вернуться в главное меню");
+                Console.ResetColor();
+
+                string choice = Console.ReadLine();
+                if (choice == "2")
+                {
+                    DisplayMainMenu();
+                    return new User();
+                }
+            }
         }
     }
 
@@ -191,33 +282,59 @@ public class Program
     /// </summary>
     public static void PerformDeleteUser()
     {
-        var userName = "";
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        PrintCentered("УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ");
+        PrintLine();
+        Console.ResetColor();
 
+        var userName = "";
         while (string.IsNullOrEmpty(userName))
         {
-            Console.WriteLine("Введите имя и фамилию через пробел и нажмите Enter:");
-            userName = Console.ReadLine();
-        }
-        var newUser = new User
-        {
-            FullName = userName
-        };
+            Console.WriteLine("Введите имя и фамилию пользователя для удаления:");
+            userName = Console.ReadLine()?.Trim();
 
-        bool isRemoveSuccessfu = UsersService.RemoveUser(userName);
+            if (string.IsNullOrEmpty(userName))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Имя не может быть пустым!\n");
+                Console.ResetColor();
+                continue;
+            }
 
-        if (isRemoveSuccessfu)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Пользователь '{newUser.FullName}' успешно удален из БД.\n");
-            Console.ResetColor(); ;
+            if (userName.Split(' ').Length < 2)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Пожалуйста, введите и имя, и фамилию!\n");
+                Console.ResetColor();
+                userName = "";
+            }
         }
-        else
+
+        try
+        {
+            bool isRemoveSuccessful = UsersService.RemoveUser(userName);
+
+            if (isRemoveSuccessful)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"\nПользователь '{userName}' успешно удален.\n");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\nПользователь '{userName}' не найден.\n");
+            }
+        }
+        catch (Exception ex)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Произошла ошибка, произведен выход на главную страницу.\n");
-            Console.ResetColor();
-            DisplayMainMenu();
+            Console.WriteLine($"\nОшибка при удалении: {ex.Message}\n");
         }
+
+        Console.ResetColor();
+        Console.WriteLine("Нажмите любую клавишу для продолжения...");
+        Console.ReadKey();
     }
 
     /// <summary>
@@ -253,16 +370,17 @@ public class Program
     /// </summary>
     public static void DisplayUserMenu(User user)
     {
+        Console.Clear();
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine(@$"
-                            * {user.FullName} *
+        PrintLine(ConsoleWidth, BorderChar);
+        PrintCentered($"ЛИЧНЫЙ КАБИНЕТ: {user.FullName.ToUpper()}");
+        PrintLine(ConsoleWidth, BorderChar);
 
-                            Выберите действие (введите число и нажмите Enter):
-
-                            1. Посмотреть профиль
-                            2. Посмотреть курсы
-                            3. Выйти
-                            ");
+        Console.WriteLine("\nВыберите действие:\n");
+        Console.WriteLine("1. Посмотреть профиль");
+        Console.WriteLine("2. Посмотреть курсы");
+        Console.WriteLine("3. Выйти\n");
+        PrintLine();
         Console.ResetColor();
     }
 
@@ -292,22 +410,22 @@ public class Program
     /// </summary>
     public static void DisplayProfileDetails(User user)
     {
+        Console.Clear();
         Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.WriteLine(@$"
-                    * {user.FullName} *
+        PrintLine(ConsoleWidth, BorderChar);
+        PrintCentered($"ПРОФИЛЬ: {user.FullName.ToUpper()}");
+        PrintLine(ConsoleWidth, BorderChar);
 
-                    Выберите действие (введите число и нажмите Enter):
+        Console.WriteLine($"\n{"Дата регистрации:",-20} {user.JoinDate}");
+        Console.WriteLine($"{"Описание:",-20} {user.Details ?? "Не заполнено"}");
+        Console.WriteLine($"{"Фото профиля:",-20} {user.Avatar ?? "Не заполнено"}");
+        Console.WriteLine($"{"Подписчики:",-20} {UsersService.FormatUserMetrics(user.FollowersCount)}");
+        Console.WriteLine($"{"Репутация:",-20} {UsersService.FormatUserMetrics(user.Reputation)}");
+        Console.WriteLine($"{"Знания:",-20} {UsersService.FormatUserMetrics(user.Knowledge)}\n");
 
-                    1. Назад
-
-                    Профиль пользователя: {user.FullName}
-                    Дата регистрации: {user.JoinDate}
-                    Описание профиля: {user.Details ?? "Не заполнено"}
-                    Фото профиля: {user.Avatar ?? "Не заполнено"}
-                    {UsersService.FormatUserMetrics(user.FollowersCount)} подписчиков
-                    {UsersService.FormatUserMetrics(user.Reputation)} репутация
-                    {UsersService.FormatUserMetrics(user.Knowledge)} знания
-                    ");
+        PrintLine();
+        Console.WriteLine("1. Назад\n");
+        PrintLine();
         Console.ResetColor();
     }
 
@@ -442,6 +560,65 @@ public class Program
         }
         Console.ResetColor();
         return comments.Select(x => x.Id.ToString());
+    }
+
+
+    /// <summary>
+    /// Отображение рейтинга пользователей.
+    /// </summary>
+    public static void DisplayUserRating()
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Cyan;
+
+        PrintLine(ConsoleWidth, BorderChar);
+        PrintCentered("РЕЙТИНГ ПОЛЬЗОВАТЕЛЕЙ");
+        PrintLine(ConsoleWidth, BorderChar);
+
+        Console.WriteLine("\nВыберите действие:\n");
+        Console.WriteLine("1. Назад\n");
+
+        try
+        {
+            var dataSet = UsersService.GetUserRating();
+
+            if (dataSet == null || dataSet.Tables.Count == 0 || dataSet.Tables[0].Rows.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("На платформе еще нет пользователей");
+                Console.ResetColor();
+                return;
+            }
+
+            const int nameWidth = 25;
+            const int statWidth = 12;
+
+            PrintLine(ConsoleWidth);
+            Console.WriteLine(
+                $"{"Пользователь".PadRight(nameWidth)} " +
+                $"{"Знания".PadLeft(statWidth)} " +
+                $"{"Репутация".PadLeft(statWidth)}");
+            PrintLine(ConsoleWidth);
+
+            foreach (DataRow row in dataSet.Tables[0].Rows)
+            {
+                Console.WriteLine(
+                    $"{row["full_name"]?.ToString()?.PadRight(nameWidth)} " +
+                    $"{row["knowledge"]?.ToString()?.PadLeft(statWidth)} " +
+                    $"{row["reputation"]?.ToString()?.PadLeft(statWidth)}");
+            }
+
+            PrintLine(ConsoleWidth);
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\nОшибка при загрузке рейтинга: {ex.Message}\n");
+        }
+
+        Console.ResetColor();
+        Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+        Console.ReadKey();
     }
 }
 
