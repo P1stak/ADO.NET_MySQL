@@ -6,7 +6,7 @@ using System.Data;
 public class Program
 {
 
-    private const int ConsoleWidth = 60;
+    private const int ConsoleWidth = 80;
     private const char BorderChar = '=';
     private const char LineChar = '-';
 
@@ -356,6 +356,9 @@ public class Program
                     UserCoursesMenu(user);
                     break;
                 case "3":
+                    DisplayCertificates(user);
+                    break;
+                case "4":
                     DisplayMainMenu();
                     return;
                 default:
@@ -379,7 +382,8 @@ public class Program
         Console.WriteLine("\nВыберите действие:\n");
         Console.WriteLine("1. Посмотреть профиль");
         Console.WriteLine("2. Посмотреть курсы");
-        Console.WriteLine("3. Выйти\n");
+        Console.WriteLine("3. Мои сертификаты");
+        Console.WriteLine("4. Выйти\n");  // Добавленная строка
         PrintLine();
         Console.ResetColor();
     }
@@ -562,7 +566,6 @@ public class Program
         return comments.Select(x => x.Id.ToString());
     }
 
-
     /// <summary>
     /// Отображение рейтинга пользователей.
     /// </summary>
@@ -617,6 +620,54 @@ public class Program
         }
 
         Console.ResetColor();
+        Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+        Console.ReadKey();
+    }
+
+    /// <summary>
+    /// Отображение сертификатов пользователя
+    /// </summary>
+    public static void DisplayCertificates(User user)
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        PrintLine(ConsoleWidth, BorderChar);
+        PrintCentered($"СЕРТИФИКАТЫ: {user.FullName.ToUpper()}");
+        PrintLine(ConsoleWidth, BorderChar);
+
+        try
+        {
+            var certificates = CertificatesService.Get(user.FullName);
+
+            if (certificates.Tables.Count == 0 || certificates.Tables[0].Rows.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("У пользователя нет сертификатов.");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("\nСписок сертификатов:\n");
+                foreach (DataRow row in certificates.Tables[0].Rows)
+                {
+                    Console.WriteLine($"Курс: {row["title"]}");
+                    Console.WriteLine($"Дата выдачи: {((DateTime)row["issue_date"]).ToString("dd.MM.yyyy")}");
+                    Console.WriteLine($"Оценка: {row["grade"]}\n");
+                    PrintLine();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Ошибка при загрузке сертификатов: {ex.Message}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"Внутренняя ошибка: {ex.InnerException.Message}");
+            }
+            Console.ResetColor();
+        }
+
         Console.WriteLine("\nНажмите любую клавишу для продолжения...");
         Console.ReadKey();
     }
