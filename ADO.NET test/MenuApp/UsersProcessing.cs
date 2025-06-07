@@ -5,6 +5,9 @@ public class UsersProcessing
 {
     private readonly UsersService _usersService = new();
 
+    /// <summary>
+    /// регистрация пользователя
+    /// </summary>
     public User PerformRegistration()
     {
         var userName = "";
@@ -37,6 +40,9 @@ public class UsersProcessing
         }
     }
 
+    /// <summary>
+    /// вход по имени пользователя в БД
+    /// </summary>
     public User PerformLogin()
     {
         var userName = "";
@@ -61,6 +67,60 @@ public class UsersProcessing
             Console.WriteLine($"Пользователь не найден, произведен выход на главную страницу.\n");
             Console.ResetColor();
             return new User();
+        }
+    }
+
+    /// <summary>
+    /// удаление пользователя из БД по full_name
+    /// </summary>
+    public void PerformDeletion()
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("Введите имя и фамилию через пробел для удаления профиля:");
+        Console.ResetColor();
+
+        while (true)
+        {
+            string? userName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Имя не может быть пустым. Попробуйте снова или введите '0' для отмены:");
+                Console.ResetColor();
+                continue;
+            }
+
+            if (userName == "0")
+            {
+                return; // Возврат в предыдущее меню
+            }
+
+            // Проверка формата "Имя Фамилия"
+            if (!userName.Contains(' ') || userName.Split(' ').Length != 2)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Неверный формат. Введите имя и фамилию через один пробел или '0' для отмены:");
+                Console.ResetColor();
+                continue;
+            }
+
+            bool isDeletionSuccessful = _usersService.RemoveUser(userName);
+
+            if (isDeletionSuccessful)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Пользователь '{userName}' успешно удален.\n");
+                Console.ResetColor();
+                return;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Не удалось удалить пользователя '{userName}' или пользователь не найден.\n");
+                Console.ResetColor();
+                return;
+            }
         }
     }
 }

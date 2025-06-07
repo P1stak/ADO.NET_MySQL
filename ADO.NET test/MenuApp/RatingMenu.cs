@@ -5,6 +5,9 @@ public record class RatingMenu(WrongChoice _wrongChoice)
 {
     private readonly UsersService _usersService = new();
 
+    /// <summary>
+    /// отображения рейтинга пользователя
+    /// </summary>
     public void Display()
     {
         Console.ForegroundColor = ConsoleColor.Cyan;

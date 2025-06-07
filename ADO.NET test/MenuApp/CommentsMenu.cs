@@ -8,6 +8,9 @@ public record class CommentsMenu(int _courseId, User _user, WrongChoice _wrongCh
     private readonly CoursesService _coursesService = new();
     private readonly CommentsService _commentsService = new();
 
+    /// <summary>
+    /// метод отображения меню коментариев
+    /// </summary>
     public void Display()
     {
         List<Comment> comments = _commentsService.Get(_courseId);
@@ -37,6 +40,9 @@ public record class CommentsMenu(int _courseId, User _user, WrongChoice _wrongCh
         Console.ResetColor();
     }
 
+    /// <summary>
+    /// метод выбора пользователя в меню коментариев
+    /// </summary>
     public void HandleUserChoice()
     {
         while (true)

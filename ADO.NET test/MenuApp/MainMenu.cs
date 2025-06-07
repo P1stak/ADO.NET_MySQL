@@ -8,6 +8,9 @@ public class MainMenu
     private readonly CoursesService _coursesService = new();
     private readonly UsersProcessing _usersProcessing = new();
 
+    /// <summary>
+    /// метод отображения главного меню
+    /// </summary>
     public void Display()
     {
         var totalCoursesCount = _coursesService.GetTotalCount();
@@ -22,11 +25,15 @@ public class MainMenu
                           "1. Войти\n" +
                           "2. Зарегистрироваться\n" +
                           "3. Рейтинг пользователей\n" +
-                          "4. Закрыть приложение\n" +
+                          "4. Удалить профиль\n" +  
+                          "5. Закрыть приложение\n" +
                           "************************************************");
         Console.ResetColor();
     }
 
+    /// <summary>
+    /// метод меню выбора пользователя в главном меню
+    /// </summary>
     public void HandleUserChoice()
     {
         while (true)
@@ -43,6 +50,7 @@ public class MainMenu
                     }
                     Display();
                     break;
+
                 case "2":
                     User newUser = _usersProcessing.PerformRegistration();
                     if (!string.IsNullOrEmpty(newUser?.FullName))
@@ -50,21 +58,29 @@ public class MainMenu
                         HandleUserMenu(newUser);
                     }
                     break;
+
                 case "3":
                     HandleUserRatingMenu();
                     break;
                 case "4":
+                    _usersProcessing.PerformDeletion();
+                    Display();
+                    break;
+
+                case "5":
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("До свидания!\n");
                     Console.ResetColor();
                     Environment.Exit(0);
                     break;
+
                 default:
                     _wrongChoice.PrintWrongChoiceMessage();
                     break;
             }
         }
     }
+
 
     private void HandleUserMenu(User user)
     {
