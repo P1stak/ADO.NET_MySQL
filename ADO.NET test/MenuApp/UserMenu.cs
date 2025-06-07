@@ -10,7 +10,8 @@ public record class UserMenu(User _user, WrongChoice _wrongChoice)
                           "1. Посмотреть профиль\n" +
                           "2. Посмотреть курсы\n" +
                           "3. Посмотреть сертификаты\n" +
-                          "4. Выйти");
+                          "0. Выйти (вернуться в главное меню)\n" +
+                          "Для возврата в предыдущее меню введите '0' в любой момент");
         Console.ResetColor();
     }
 
@@ -19,6 +20,14 @@ public record class UserMenu(User _user, WrongChoice _wrongChoice)
         while (true)
         {
             string? choice = Console.ReadLine();
+
+            if (choice == "0")  // Общий случай для возврата
+            {
+                var mainMenu = new MainMenu();
+                mainMenu.Display();
+                mainMenu.HandleUserChoice();
+                return;
+            }
 
             switch (choice)
             {
@@ -31,11 +40,6 @@ public record class UserMenu(User _user, WrongChoice _wrongChoice)
                 case "3":
                     HandleUserCertificateMenu();
                     break;
-                case "4":
-                    var mainMenu = new MainMenu();
-                    mainMenu.Display();
-                    mainMenu.HandleUserChoice();
-                    return;
                 default:
                     _wrongChoice.PrintWrongChoiceMessage();
                     break;
