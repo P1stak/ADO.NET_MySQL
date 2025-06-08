@@ -6,4 +6,4 @@
         Console.WriteLine("Неверный выбор. Попробуйте снова.");
         Console.ResetColor();
     }
-}
+} 
