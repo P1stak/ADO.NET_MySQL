@@ -26,12 +26,15 @@ REST API с документацией Swagger
 Тестирование: xUnit, Swagger
 
 Структура проекта:
+
 ![1](https://github.com/user-attachments/assets/723bcb11-dd68-4220-be2d-c6d8687fdead)
 
 Меню:
+
 ![2](https://github.com/user-attachments/assets/d4413bc6-ee12-4a08-be0b-7070163c7786)
 
 REST API с документацией Swagger:
+
 ![3](https://github.com/user-attachments/assets/2bad0d4d-cc63-4e43-a438-97691857ec45)
 
 
