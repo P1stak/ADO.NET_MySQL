@@ -165,6 +165,7 @@ namespace ADO.NET_test.Services
         /// </summary>
         /// <param name="userName">Имя пользователя</param>
         /// <returns>DataSet</returns>
+        // используй хранимую процедуру для работы автотеста этого метода. Пример есть в Porgram в коментах
         public DataSet GetUserSocialInfo(string userName)
         {
             using var connection = new MySqlConnection(Constant.ConnectionString);

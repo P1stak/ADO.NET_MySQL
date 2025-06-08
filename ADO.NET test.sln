@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADO.NET test", "ADO.NET tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger_test", "Swagger_test\Swagger_test.csproj", "{70A255A5-179B-4664-B435-432B01FBACC4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "my_db_test", "my_db_test\my_db_test.csproj", "{D83136FD-A818-4174-8BE5-7AE429C3F4E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{70A255A5-179B-4664-B435-432B01FBACC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A255A5-179B-4664-B435-432B01FBACC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70A255A5-179B-4664-B435-432B01FBACC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D83136FD-A818-4174-8BE5-7AE429C3F4E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D83136FD-A818-4174-8BE5-7AE429C3F4E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D83136FD-A818-4174-8BE5-7AE429C3F4E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D83136FD-A818-4174-8BE5-7AE429C3F4E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
