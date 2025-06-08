@@ -159,5 +159,27 @@ namespace ADO.NET_test.Services
 
             return dataSet;
         }
+
+        /// <summary>
+        /// Получение социальной информации пользователя
+        /// </summary>
+        /// <param name="userName">Имя пользователя</param>
+        /// <returns>DataSet</returns>
+        public DataSet GetUserSocialInfo(string userName)
+        {
+            using var connection = new MySqlConnection(Constant.ConnectionString);
+            connection.Open();
+
+            const string sqlQuery = "CALL get_user_social_info(@user_name);";
+
+            using var command = new MySqlCommand(sqlQuery, connection);
+            command.Parameters.AddWithValue("@user_name", userName);
+
+            using var dataAdapter = new MySqlDataAdapter(command);
+            var dataSet = new DataSet();
+            dataAdapter.Fill(dataSet);
+
+            return dataSet;
+        }
     }
 }

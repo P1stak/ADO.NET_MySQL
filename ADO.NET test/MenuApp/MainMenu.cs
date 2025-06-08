@@ -1,5 +1,6 @@
 ﻿using ADO.NET_test.Models;
 using ADO.NET_test.Services;
+using MySql.Data.MySqlClient;
 
 public class MainMenu
 {
@@ -13,11 +14,13 @@ public class MainMenu
     /// </summary>
     public void Display()
     {
+        using var connection = new MySqlConnection(Constant.ConnectionString);
+
         var totalCoursesCount = _coursesService.GetTotalCount();
         var totalUsersCount = _usersService.GetTotalCount();
-        Console.ForegroundColor = ConsoleColor.DarkBlue;
+        Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("************************************************\n" +
-                          "* Добро пожаловать на онлайн платформу Stepik! *\n" +
+                          $"****** Добро пожаловать в БД {connection.Database.ToString()}! ******\n" +
                           "************************************************\n" +
                           $"Количество курсов на платформе: {totalCoursesCount}\n" +
                           $"Количество пользователей на платформе: {totalUsersCount}\n\n" +
