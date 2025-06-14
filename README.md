@@ -42,7 +42,7 @@ REST API с документацией Swagger:
 
 Клонировать репозиторий:
 ```
-git clone https://github.com/ваш-аккаунт/steplk.git
+git clone https://github.com/P1stak/ADO.NET_MySQL.git
 ```
 
 Импортировать my_DB.sql в MySQL
