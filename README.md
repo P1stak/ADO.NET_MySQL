@@ -123,6 +123,6 @@ git clone https://github.com/P1stak/ADO.NET_MySQL.git
 Документация API в Swagger UI
  ![image](https://github.com/user-attachments/assets/eae35bf0-b213-45fd-b72a-7d48dae247e6)
 
-Тесты сервисов:
- ![image](https://github.com/user-attachments/assets/5f463d79-0748-40dd-9777-b930bb0c3aa2)
 
+![image](https://github.com/user-attachments/assets/5f463d79-0748-40dd-9777-b930bb0c3aa2)
+Тесты сервисов:
