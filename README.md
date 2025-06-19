@@ -67,12 +67,14 @@ git clone https://github.com/P1stak/ADO.NET_MySQL.git
 4) Запустите у себя проект (F5)
 
 
-🏗 Архитектура проекта
-![image](https://github.com/user-attachments/assets/100992eb-1e54-4d4c-9b9b-aeb44ba8432d)
+
+ 🏗 Архитектура проекта
+ 
+ ![image](https://github.com/user-attachments/assets/100992eb-1e54-4d4c-9b9b-aeb44ba8432d)
 
 
 
-💡 Ключевые особенности проекта?
+ 💡 Ключевые особенности проекта?
 * Полноценная многослойная архитектура
 * Четкое разделение на presentation, business logic и data access слои
 * Возможность использования как консольного, так и веб-интерфейса
@@ -91,25 +93,36 @@ git clone https://github.com/P1stak/ADO.NET_MySQL.git
 Пример работы консольного интерфейса
 
 Главное меню:
-![image](https://github.com/user-attachments/assets/36aeb80a-cf8b-423d-b5b0-66a03c562ea0)
+ ![image](https://github.com/user-attachments/assets/36aeb80a-cf8b-423d-b5b0-66a03c562ea0)
 
 Меню пользователя (информация о пользователе, дата регистрации, рейтинг, социальные сеты и т.п.):
-![image](https://github.com/user-attachments/assets/1ef92ecb-527f-49d4-845b-a0a101a7517a)
+ ![image](https://github.com/user-attachments/assets/1ef92ecb-527f-49d4-845b-a0a101a7517a)
 
 Список проодимых\прошедших курсов пользователя:
-![image](https://github.com/user-attachments/assets/ada73d57-c0cd-4504-88db-d718a5a17563)
+ ![image](https://github.com/user-attachments/assets/ada73d57-c0cd-4504-88db-d718a5a17563)
 
 Коментарии к курсу
-![image](https://github.com/user-attachments/assets/d1ddcc1b-ab29-4840-a121-e47becd963a2)
+ ![image](https://github.com/user-attachments/assets/d1ddcc1b-ab29-4840-a121-e47becd963a2)
+
+Сертификаты пользователя:
+ ![image](https://github.com/user-attachments/assets/29ac5def-5adb-4075-9539-0272b836dc25)
+
+Рейтинг пользователей:
+ ![image](https://github.com/user-attachments/assets/38dd479d-3a6c-4275-adbc-4125c716cc6d)
+
+Регистрация/Удаления пользователя из БД:
+
+Добавление тестовой сущности в БД
+ ![image](https://github.com/user-attachments/assets/f2958523-3e4b-4f1b-a800-61e026688ea0)
+
+ ![image](https://github.com/user-attachments/assets/035054fc-878c-45da-b9ea-19c40a8048f8)
+
+ ![image](https://github.com/user-attachments/assets/b7b5651d-8540-4a9b-9b40-9854d5be46f2)
 
 
-
-
-
-
-![image](https://github.com/user-attachments/assets/035054fc-878c-45da-b9ea-19c40a8048f8) добавление тестовой сущности в БД
-
-
-
-https://screenshots/swagger_ui.png
 Документация API в Swagger UI
+ ![image](https://github.com/user-attachments/assets/eae35bf0-b213-45fd-b72a-7d48dae247e6)
+
+Тесты сервисов:
+ ![image](https://github.com/user-attachments/assets/5f463d79-0748-40dd-9777-b930bb0c3aa2)
+
